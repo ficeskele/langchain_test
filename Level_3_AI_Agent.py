@@ -58,10 +58,6 @@ def generate_answer(state: State):
     ]).content
     return {"messages": [AIMessage(content=answer)]}
 
-def interrupt_process(state: State):
-    return {"messages":[{"role":"assistant",
-                         "content":"Understood. What else would you like to ask?"}]}
-
 # ------- Graph -------
 g = StateGraph(State)
 g.add_node("gen_multi_queries",     gen_multi_queries)
