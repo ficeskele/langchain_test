@@ -1,5 +1,5 @@
 # ---------- imports ----------
-from common_utils import (   
+from .common_utils import (   
     msg_content,
     llm,
     search_tool,  
@@ -28,26 +28,13 @@ def generate_search_query(state: State):
     }
 
 
-
-def ask_user(state: State):
-    sq = state["search_query"]
-    
-    ans = input(f"\nAssistant: Search the web for \"{sq}\"? (y/n) ").lower()
-    ok  = ans in {"y", "yes"}
-    return {"approved": ok,
-            "messages": [{"role":"assistant",
-                          "content": "Great, searching…" if ok else
-                                     "Okay, I won’t search. Ask something else."}]}
-
 def execute_search(state: State):
     res = search_tool.run(state["search_query"])       
     return {"search_result": res}
 
 def generate_answer(state: State):
     user_q = msg_content(state["messages"][0])
-    
     res    = state["search_result"]
-    print(f"\nAssistant: Search result:\n{res}\n")
     ans    = llm.invoke([
         SystemMessage(content="You are a helpful assistant. Use the search result to answer."),
         HumanMessage(content=user_q),
@@ -55,35 +42,24 @@ def generate_answer(state: State):
     ]).content
     return {"messages":[AIMessage(content=ans)]}
 
-def interrupt_process(state: State):
-    return {"messages":[{"role":"assistant",
-                         "content":"Understood. What else would you like to ask?"}]}
-
 # ------- Graph -------
 g = StateGraph(State)
 g.add_node("generate_search_query", generate_search_query)
-g.add_node("ask_user",              ask_user)
 g.add_node("execute_search",        execute_search)
 g.add_node("generate_answer",       generate_answer)
-g.add_node("interrupt_process",     interrupt_process)
 
 g.add_edge(START, "generate_search_query")
-g.add_edge("generate_search_query", "ask_user")
-
-g.add_conditional_edges("ask_user",
-                        lambda s: "execute_search" if s.get("approved") else "interrupt_process")
-
+g.add_edge("generate_search_query", "execute_search")
 g.add_edge("execute_search", "generate_answer")
 g.add_edge("generate_answer", END)
-g.add_edge("interrupt_process", END)
 
 chat_graph = g.compile()
 
 png_bytes = chat_graph.get_graph().draw_mermaid_png()
-with open("Level_2_AI_Agent_Workflow.png", "wb") as f:
+with open("Level__AI_Agent_Workflow.png", "wb") as f:
     f.write(png_bytes)
 
-print("✅ Level_2_AI_Agent_Workflow.png saved successfully.")
+print("✅ Level_1_AI_Agent_Workflow.png saved successfully.")
 
 
 def chat_loop():

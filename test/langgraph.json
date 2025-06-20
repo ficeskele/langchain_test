@@ -1,0 +1,14 @@
+{
+  "dependencies": ["."],
+ 
+  "graphs": {
+    "level1": "src.agent.Level_1_AI_Agent:chat_graph",
+    "level2": "src.agent.Level_2_AI_Agent:chat_graph",
+    "level3": "src.agent.Level_3_AI_Agent:chat_graph",
+    "level4": "src.agent.Level_4_AI_Agent:chat_graph",
+    "level5": "src.agent.Level_5_AI_Agent:chat_graph"
+  },
+  
+  "env": ".env",
+  "image_distro": "wolfi"
+}
