@@ -47,6 +47,8 @@ def msg_content(msg: BaseMessage | dict) -> str:
     """
     return msg["content"] if isinstance(msg, dict) else msg.content
 
+def split_by_newline(text: str) -> list[str]:
+    return text.split('\n')
 
 # ---------------------------------------------------------------------------
 # 🤖  Shared singletons (LLM & Search tool)

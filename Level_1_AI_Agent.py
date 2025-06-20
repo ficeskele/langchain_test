@@ -21,7 +21,7 @@ graph_builder = StateGraph(State)
 # ------- Nodes -------
 def generate_search_query(state: State):
     user_q = msg_content(state["messages"][-1])
-    sq     = llm.invoke(f"Generate a concise web search query for: {user_q}").content.strip()
+    sq     = llm.invoke(f"Generate a concise web search query for: {user_q}, plz text only dont do bullet point.").content.strip()
     return {
         "search_query": sq,
         "messages": [AIMessage(content=f"I could search for **{sq}**")]
@@ -56,7 +56,7 @@ g.add_edge("generate_answer", END)
 chat_graph = g.compile()
 
 png_bytes = chat_graph.get_graph().draw_mermaid_png()
-with open("Level_1_AI_Agent_Workflow.png", "wb") as f:
+with open("Level__AI_Agent_Workflow.png", "wb") as f:
     f.write(png_bytes)
 
 print("✅ Level_1_AI_Agent_Workflow.png saved successfully.")

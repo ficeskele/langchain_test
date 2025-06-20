@@ -21,7 +21,7 @@ graph_builder = StateGraph(State)
 # ------- Nodes -------
 def generate_search_query(state: State):
     user_q = msg_content(state["messages"][-1])
-    sq     = llm.invoke(f"Generate a concise web search query for: {user_q}").content.strip()
+    sq     = llm.invoke(f"Generate a concise web search query for: {user_q}, plz text only dont do bullet point.").content.strip()
     return {
         "search_query": sq,
         "messages": [AIMessage(content=f"I could search for **{sq}**")]
@@ -31,6 +31,7 @@ def generate_search_query(state: State):
 
 def ask_user(state: State):
     sq = state["search_query"]
+    
     ans = input(f"\nAssistant: Search the web for \"{sq}\"? (y/n) ").lower()
     ok  = ans in {"y", "yes"}
     return {"approved": ok,
@@ -44,7 +45,9 @@ def execute_search(state: State):
 
 def generate_answer(state: State):
     user_q = msg_content(state["messages"][0])
+    
     res    = state["search_result"]
+    print(f"\nAssistant: Search result:\n{res}\n")
     ans    = llm.invoke([
         SystemMessage(content="You are a helpful assistant. Use the search result to answer."),
         HumanMessage(content=user_q),
@@ -80,7 +83,7 @@ png_bytes = chat_graph.get_graph().draw_mermaid_png()
 with open("Level_2_AI_Agent_Workflow.png", "wb") as f:
     f.write(png_bytes)
 
-print("✅ Level_2_AI_Agent_Workflow.png saveed successfully.")
+print("✅ Level_2_AI_Agent_Workflow.png saved successfully.")
 
 
 def chat_loop():
